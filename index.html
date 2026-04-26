@@ -1,0 +1,318 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>测一测，在知否的世界里，谁是你的命定伴侣？</title>
+  <style>
+    :root {
+      --bg-1: #f4f7ff;
+      --bg-2: #eef1ff;
+      --ink: #2e3552;
+      --muted: #677099;
+      --primary: #7585d8;
+      --primary-deep: #5d6dc4;
+      --card: #fbfcff;
+      --line: #d8def8;
+      --leaf: #95b99d;
+      --shadow: rgba(87, 102, 166, 0.15);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Noto Serif SC", "Songti SC", "STSong", serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 15% 18%, #ffffff 0, #ffffff66 22%, transparent 45%),
+        radial-gradient(circle at 88% 12%, #ede7ff 0, #ede7ff88 22%, transparent 45%),
+        linear-gradient(170deg, var(--bg-1), var(--bg-2));
+      min-height: 100vh;
+    }
+
+    .page { max-width: 980px; margin: 0 auto; padding: 24px 16px 60px; position: relative; }
+    .ornament { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+    .leaf { position: absolute; width: 84px; height: 42px; border-radius: 84px 84px 0 84px; background: linear-gradient(140deg, #b7d2bf, var(--leaf)); opacity: 0.24; transform: rotate(-20deg); }
+    .leaf.a { top: 52px; left: -20px; }
+    .leaf.b { top: 160px; right: -16px; transform: rotate(20deg) scaleX(-1); }
+    .leaf.c { bottom: 90px; left: 8px; transform: rotate(-45deg); }
+    .leaf.d { bottom: 20px; right: 20px; transform: rotate(45deg) scaleX(-1); }
+
+    .hero {
+      position: relative;
+      background: linear-gradient(180deg, #fdfdff, #f7f9ff);
+      border: 2px solid var(--line);
+      border-radius: 14px;
+      padding: 26px 22px 20px;
+      box-shadow: 0 10px 24px var(--shadow), 4px 4px 0 #d7defa;
+      margin-bottom: 14px;
+    }
+
+    h1 { margin: 0 0 10px; font-size: clamp(24px, 4vw, 34px); color: #46538f; line-height: 1.3; }
+    .subtitle { margin: 0; color: var(--muted); line-height: 1.75; font-size: 15px; }
+
+    .progress { position: sticky; top: 10px; z-index: 30; margin: 14px 0 22px; padding: 10px 12px; border: 2px solid var(--line); border-radius: 12px; background: #fdfdffde; backdrop-filter: blur(5px); }
+    .progress-track { height: 10px; border-radius: 999px; background: #e7ebfc; overflow: hidden; }
+    .progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #9eadef, var(--primary)); transition: width .25s ease; }
+    .progress-text { margin-top: 8px; font-size: 13px; color: var(--muted); }
+
+    .section { margin: 26px 0 14px; padding: 8px 10px; border-left: 4px solid var(--primary); background: #f5f7ffb8; color: #4c5b98; font-size: 17px; font-weight: 700; border-radius: 6px; }
+    .question { margin: 0 0 14px; background: var(--card); border: 2px solid var(--line); border-radius: 12px; padding: 14px; box-shadow: 2px 2px 0 #e4e9ff; }
+    .q-title { margin: 0 0 12px; font-size: 16px; line-height: 1.75; }
+    .options { display: grid; gap: 10px; }
+
+    .option { display: flex; align-items: flex-start; gap: 10px; border: 1px solid #dce2fb; border-radius: 10px; padding: 10px 12px; cursor: pointer; transition: all .2s ease; background: #ffffff; }
+    .option:hover { border-color: #b9c4f4; transform: translateY(-1px); box-shadow: 0 6px 14px #9aa9e224; }
+    .option input { margin-top: 3px; accent-color: var(--primary); }
+    .option span { line-height: 1.7; }
+
+    .actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+    button { border: none; border-radius: 10px; padding: 10px 16px; font-size: 15px; cursor: pointer; transition: all .2s ease; }
+    .btn-primary { background: linear-gradient(135deg, var(--primary), var(--primary-deep)); color: #fff; box-shadow: 0 8px 16px #7786d63b; }
+    .btn-ghost { background: #f0f3ff; color: #4b598f; border: 1px solid #cfd8fb; }
+
+    #result { margin-top: 22px; border: 2px solid #cdd6fb; border-radius: 14px; background: #fcfdff; padding: 20px 18px; display: none; box-shadow: 0 12px 24px var(--shadow), 4px 4px 0 #d5dcfb; }
+    .result-type { font-size: clamp(20px, 3.6vw, 28px); margin: 0 0 10px; color: #455190; }
+    .result-visual { display: flex; gap: 12px; align-items: center; padding: 10px 12px; border: 1px solid #d9e0fb; border-radius: 10px; background: #f5f8ff; }
+    .avatar-box { width: 160px; height: 160px; border: 2px solid #cfd7fb; border-radius: 10px; image-rendering: pixelated; background: #eef2ff; box-shadow: 3px 3px 0 #d9e0fb, inset 0 0 0 2px #edf1ff; flex: none; }
+    .avatar-note { font-size: 13px; color: #66709a; line-height: 1.7; }
+    .result-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 12px; }
+    .result-item { border: 1px solid #d9e0fb; border-radius: 10px; background: #f8faff; padding: 10px 12px; }
+    .result-item h3 { margin: 0 0 6px; font-size: 14px; color: #5d69a7; }
+    .result-item p, .result-item code { margin: 0; line-height: 1.7; font-size: 14px; color: #2f3551; word-break: break-word; font-family: "Noto Serif SC", "Songti SC", "STSong", serif; }
+    .dim { margin-top: 10px; color: #606a97; font-size: 13px; line-height: 1.8; }
+    .footer-note { margin-top: 18px; color: #6f779b; font-size: 13px; }
+
+    @media (max-width: 640px) {
+      .page { padding: 16px 12px 42px; }
+      .hero { padding: 18px 14px; }
+      .question { padding: 12px; }
+      .option { padding: 8px 10px; }
+      .result-visual { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <div class="ornament"><span class="leaf a"></span><span class="leaf b"></span><span class="leaf c"></span><span class="leaf d"></span></div>
+    <header class="hero">
+      <h1>测一测，在知否的世界里，谁是你的命定伴侣？</h1>
+      <p class="subtitle">重构版：题目统一为“你期待对方怎么做”，并采用“维度 + 风格”双引擎匹配，避免结果单一化。</p>
+    </header>
+
+    <div class="progress">
+      <div class="progress-track"><div id="progressBar" class="progress-bar"></div></div>
+      <div id="progressText" class="progress-text">已完成 0 / 25</div>
+    </div>
+
+    <form id="quiz"></form>
+    <div class="actions">
+      <button class="btn-primary" type="button" id="submitBtn">查看我的结果</button>
+      <button class="btn-ghost" type="button" id="resetBtn">重置测试</button>
+    </div>
+    <section id="result"></section>
+  </main>
+
+  <script>
+    const questions = [
+      { s: "1️⃣ 爱的表达方式（情感需求）", dim: "E", q: "1. 你连续两周加班到很晚，你最期待对方：", o: [{ t: "只要发消息安慰你就好", v: 2, s: "empathy" }, { t: "到公司楼下接你回家", v: 3, s: "presence" }, { t: "先听你说，再问你真正需要什么", v: 4, s: "co" }, { t: "提醒你别再硬扛，明确作息边界", v: 2, s: "boundary" }, { t: "直接帮你调整下周日程和分工", v: 5, s: "system" }] },
+      { s: "1️⃣ 爱的表达方式（情感需求）", dim: "E", q: "2. 你生日被工作打断，你最期待对方：", o: [{ t: "先把你情绪哄好", v: 3, s: "empathy" }, { t: "当天短暂出现，确保你不落单", v: 4, s: "presence" }, { t: "询问你想补过还是改成小庆祝", v: 3, s: "co" }, { t: "把今后重要日子冲突提前约法", v: 2, s: "boundary" }, { t: "把补庆祝和工作善后打包安排", v: 5, s: "system" }] },
+      { s: "1️⃣ 爱的表达方式（情感需求）", dim: "E", q: "3. 你生病发烧时，你最期待对方：", o: [{ t: "频繁关心你有没有好一点", v: 3, s: "empathy" }, { t: "到场照顾并陪你去医院", v: 4, s: "presence" }, { t: "先确认你的照护偏好再行动", v: 3, s: "co" }, { t: "提醒你必须休息，拒绝继续工作", v: 2, s: "boundary" }, { t: "药、复诊、饮食、请假一并安排", v: 5, s: "system" }] },
+      { s: "1️⃣ 爱的表达方式（情感需求）", dim: "E", q: "4. 你接到升职机会但压力翻倍，你最期待对方：", o: [{ t: "先给你情绪上的肯定与鼓励", v: 3, s: "empathy" }, { t: "陪你熬过最忙的前两周", v: 4, s: "presence" }, { t: "和你把利弊讲透再由你决定", v: 3, s: "co" }, { t: "提醒你明确可承受上限", v: 2, s: "boundary" }, { t: "帮你做风险预案并定期复盘", v: 5, s: "system" }] },
+      { s: "1️⃣ 爱的表达方式（情感需求）", dim: "E", q: "5. 约会被他家突发事务打断，你最期待对方：", o: [{ t: "先安抚你的失落，不让你硬撑", v: 3, s: "empathy" }, { t: "处理完马上回来见你", v: 4, s: "presence" }, { t: "和你商量补偿方式与时间", v: 3, s: "co" }, { t: "以后同类情况先报备再取消", v: 2, s: "boundary" }, { t: "直接重排后续两周约会计划", v: 5, s: "system" }] },
+
+      { s: "2️⃣ 婚姻观与安全感（核心区分）", dim: "R", q: "6. 你最近工作压力很大，经常加班到很晚。伴侣提议两人一起出门旅行放松，但你觉得旅行会耽误工作，而且近期花费较多。你会？", o: [{ t: "直接拒绝，认为工作更重要，伴侣应该理解", v: 4, s: "boundary" }, { t: "委婉解释，但坚持不去，建议伴侣自己去或找朋友", v: 3, s: "boundary" }, { t: "犹豫不决，最后可能妥协，但心里不太情愿", v: 2, s: "co" }, { t: "同意去，但要求缩短行程，且路上还要处理工作", v: 5, s: "system" }, { t: "欣然同意，认为伴侣开心和关系维护比工作重要，钱可以再赚", v: 1, s: "empathy" }] },
+      { s: "2️⃣ 婚姻观与安全感（核心区分）", dim: "R", q: "7. 你们计划买房。你的存款足够付首付，但伴侣存款较少。伴侣希望房产写两人名字，并且共同还贷。你的态度是？", o: [{ t: "必须只写自己名字，因为主要出资，伴侣还款能力不足", v: 4, s: "boundary" }, { t: "写两人名字，但签订协议明确出资比例，离婚按比例分", v: 5, s: "system" }, { t: "无所谓，信任伴侣，写两人名字，不签协议", v: 1, s: "empathy" }, { t: "只写伴侣名字，表示诚意和爱，自己愿意付出", v: 2, s: "presence" }, { t: "要求伴侣家里也出钱，否则不写名字，且要求伴侣提高收入", v: 3, s: "boundary" }] },
+      { s: "2️⃣ 婚姻观与安全感（核心区分）", dim: "R", q: "8. 你和伴侣已经同居/结婚两年。某天你发现伴侣背着你给TA的父母转了5万元（从你们共同存款中支出）。你的反应是？", o: [{ t: "完全不在意，那是TA的钱，孝敬父母应该的", v: 1, s: "empathy" }, { t: "有点不舒服，但理解，会温和地建议下次提前说一声", v: 2, s: "co" }, { t: "很生气，认为这是不尊重你，要求TA立刻把钱要回来", v: 4, s: "boundary" }, { t: "表面不说什么，但开始留意家庭财务，暗暗计划AA制", v: 5, s: "system" }, { t: "直接提出离婚或分手，认为这是欺骗和背叛", v: 3, s: "boundary" }] },
+      { s: "2️⃣ 婚姻观与安全感（核心区分）", dim: "R", q: "9. 你因工作需要调到另一个城市一年，伴侣无法跟去。关于异地期间的关系维护，你的想法是？", o: [{ t: "顺其自然，每天联系太累，隔几天打个电话就行，相信感情", v: 2, s: "presence" }, { t: "约定每天视频通话，定期互相探望，尽量保持亲密", v: 4, s: "co" }, { t: "交给伴侣决定，TA想怎样就怎样，自己配合", v: 1, s: "empathy" }, { t: "要求伴侣必须每个月来看自己，否则就是不够爱", v: 5, s: "boundary" }, { t: "反对异地，认为一定会出问题，要么放弃工作机会，要么分手", v: 3, s: "boundary" }] },
+      { s: "2️⃣ 婚姻观与安全感（核心区分）", dim: "R", q: "10. 情绪低落时，你通常希望伴侣做什么？", o: [{ t: "什么都不要做，让我一个人静静，别烦我就行", v: 2, s: "boundary" }, { t: "简单问一句“还好吗”，然后给我空间，但随时可找TA", v: 3, s: "presence" }, { t: "耐心听我倾诉，给我拥抱和安慰的语言", v: 4, s: "empathy" }, { t: "主动帮我分析问题，给出解决方案，替我行动", v: 5, s: "system" }, { t: "用各种方式哄我开心，带我出去吃、玩，直到我情绪好转", v: 1, s: "presence" }] },
+
+      { s: "3️⃣ 价值观与冲突处理（高质量区分）", dim: "T", q: "11. 你和伴侣关于是否要孩子产生了分歧（你想要，TA不想要，或反之）。你会？", o: [{ t: "坚持自己的立场，试图说服对方，认为这是原则问题不能让步", v: 4, s: "boundary" }, { t: "尊重对方，但继续沟通，寻求妥协方案（如晚几年再要）", v: 3, s: "co" }, { t: "为了关系和谐，放弃自己的立场，听从对方的决定", v: 1, s: "presence" }, { t: "回避讨论，觉得时间会改变一切，等以后再说", v: 2, s: "empathy" }, { t: "认为这是不可调和的矛盾，考虑分手/离婚", v: 5, s: "boundary" }] },
+      { s: "3️⃣ 价值观与冲突处理（高质量区分）", dim: "T", q: "12. 你的伴侣最近迷上了一个高消费的爱好（如滑雪、摄影、买奢侈品），每月花费近一半收入。你会？", o: [{ t: "支持TA，人要有爱好，钱可以再赚，开心最重要", v: 1, s: "empathy" }, { t: "不过问，只要不影响基本生活，随TA去", v: 2, s: "presence" }, { t: "委婉提醒，建议设定每月预算，避免过度消费", v: 3, s: "co" }, { t: "明确反对，要求TA缩减爱好支出，认为这是不负责任", v: 4, s: "boundary" }, { t: "直接没收TA的信用卡或控制家庭财政，强制管理", v: 5, s: "system" }] },
+      { s: "3️⃣ 价值观与冲突处理（高质量区分）", dim: "T", q: "13. 你和伴侣一起参加朋友聚会。聚会上，伴侣当着众人的面，说了一件你觉得很尴尬的关于你的糗事，大家笑得很开心。你会？", o: [{ t: "当场翻脸，指责伴侣不尊重你，然后离席", v: 1, s: "boundary" }, { t: "强颜欢笑，但回家后和伴侣大吵一架", v: 2, s: "empathy" }, { t: "私下低声告诉伴侣你不喜欢这样，希望下次注意", v: 3, s: "co" }, { t: "无所谓，觉得是小事，自己也跟着笑", v: 4, s: "presence" }, { t: "记在心里，之后找机会在朋友面前说伴侣的糗事报复", v: 5, s: "system" }] },
+      { s: "3️⃣ 价值观与冲突处理（高质量区分）", dim: "T", q: "14. 你获得了一个升职机会，但需要经常出差和应酬。伴侣表示不满，希望你能多顾家。你会？", o: [{ t: "拒绝升职，以家庭为重，认为伴侣的感受更重要", v: 1, s: "presence" }, { t: "与伴侣商量，寻求折中，比如减少部分出差任务或提高家庭补偿", v: 3, s: "co" }, { t: "坚持升职，认为事业机会难得，要求伴侣理解和支持", v: 4, s: "boundary" }, { t: "暂时接受升职，观察一段时间，如果伴侣持续不满再调整", v: 2, s: "system" }, { t: "认为伴侣不支持自己就是不爱，直接提分手/离婚", v: 5, s: "boundary" }] },
+      { s: "3️⃣ 价值观与冲突处理（高质量区分）", dim: "T", q: "15. 你和伴侣因为家务分配不均发生争吵。你的处理方式是？", o: [{ t: "冷静下来，制定一个公平的家务表，按劳分配", v: 5, s: "system" }, { t: "主动承担更多，避免争吵，息事宁人", v: 2, s: "presence" }, { t: "坚持自己做得够多了，要求伴侣承担一半，否则不做", v: 4, s: "boundary" }, { t: "请第三方（父母或朋友）来评理，或请钟点工解决", v: 3, s: "co" }, { t: "每次争吵就冷战，直到对方先道歉", v: 1, s: "empathy" }] },
+
+      { s: "4️⃣ 情绪与争吵模式（关系体验）", dim: "C", q: "16. 你和伴侣因为一件小事（例如谁忘了丢垃圾）在晚饭时吵了起来。你当时情绪比较激动。你会？", o: [{ t: "立刻提高音量，把不满全部说出来，吵完为止", v: 1, s: "empathy" }, { t: "强迫自己冷静，说“我们先吃饭，吃完再说”，然后饭后继续讨论", v: 4, s: "co" }, { t: "不再说话，沉默冷战，等对方主动来哄或道歉", v: 2, s: "boundary" }, { t: "当场道歉，哪怕觉得自己没错，只想尽快结束争吵", v: 3, s: "presence" }, { t: "借故离开（去阳台、洗手间），平复心情后再回来沟通", v: 5, s: "system" }] },
+      { s: "4️⃣ 情绪与争吵模式（关系体验）", dim: "C", q: "17. 伴侣连续几天对你态度冷淡，问你“没事”，但你明显感觉到不对劲。你会？", o: [{ t: "追着问到底，不得到答案不罢休，认为情侣之间不该有秘密", v: 2, s: "boundary" }, { t: "也冷淡回去，用同样方式让TA感受一下，逼TA开口", v: 1, s: "empathy" }, { t: "主动做更多贴心的事（做饭、买礼物），希望用行动缓解", v: 3, s: "presence" }, { t: "给TA空间，等TA愿意说，但会默默留意", v: 4, s: "co" }, { t: "直接说：我感觉到你不高兴，如果你不想说，我等你；但我想陪你聊聊。", v: 5, s: "system" }] },
+      { s: "4️⃣ 情绪与争吵模式（关系体验）", dim: "C", q: "18. 大吵一架后，你说了很伤人的话，事后你后悔了。你会？", o: [{ t: "拉不下面子，等对方先低头，假装没发生过", v: 1, s: "boundary" }, { t: "主动说“对不起”，但带条件：“我错了，可你也……”", v: 3, s: "co" }, { t: "认认真真道歉，承认自己说了过分的话，不找借口", v: 5, s: "system" }, { t: "买礼物或做一件TA喜欢的事，用行动道歉", v: 4, s: "presence" }, { t: "当没发生，觉得吵架说狠话很正常，过两天就好了", v: 2, s: "empathy" }] },
+      { s: "4️⃣ 情绪与争吵模式（关系体验）", dim: "C", q: "19. 伴侣在外面受了委屈（工作被批评/朋友误解），回家后向你抱怨同一件事超过一小时。你其实已经有点烦了。你会？", o: [{ t: "直接打断：够了，翻来覆去说也没用，你能不能振作点？", v: 1, s: "boundary" }, { t: "默默听着，但心不在焉刷手机，偶尔嗯一声", v: 2, s: "empathy" }, { t: "换个话题，转移注意力，带TA看剧或吃东西", v: 3, s: "presence" }, { t: "听完后，帮TA分析问题，给出具体建议", v: 4, s: "co" }, { t: "耐心听完，先共情：我懂你很难受，等TA情绪平复再谈解决办法", v: 5, s: "system" }] },
+      { s: "4️⃣ 情绪与争吵模式（关系体验）", dim: "C", q: "20. 你发现伴侣情绪崩溃大哭，但起因是你认为非常小的事情（如打翻了一杯水）。你会？", o: [{ t: "觉得不可理喻，让TA自己冷静，你去做别的事", v: 1, s: "boundary" }, { t: "简单说“别哭了”，递纸巾，但不多问", v: 2, s: "presence" }, { t: "抱住TA，安慰说“没事的”，然后询问真正的原因", v: 5, s: "co" }, { t: "立刻认错（哪怕不知道错在哪），说“都是我的错，别哭了”", v: 3, s: "empathy" }, { t: "拍照或录下来，以后吵架时拿出来说“你看你那天多可笑”", v: 4, s: "system" }] },
+
+      { s: "5️⃣ 现实能力与责任感（知否特色核心）", dim: "D", q: "21. 你们的家电（如洗衣机）突然坏了。周末维修师傅要加价才来。伴侣说“先别修了，等下周普通时间”。你会？", o: [{ t: "听伴侣的，等下周，暂时手洗或去洗衣店", v: 2, s: "presence" }, { t: "自己上网查教程尝试维修，省钱但可能弄更坏", v: 3, s: "co" }, { t: "坚持请师傅加价来，多花点钱省麻烦", v: 4, s: "boundary" }, { t: "让伴侣决定，你配合，但之后如果生活不便不要抱怨", v: 1, s: "empathy" }, { t: "责怪伴侣之前没有保养家电，要求TA负责解决", v: 1, s: "boundary" }] },
+      { s: "5️⃣ 现实能力与责任感（知否特色核心）", dim: "D", q: "22. 伴侣想辞职创业，但你们目前有房贷。TA希望你全力支持。你会？", o: [{ t: "一口反对，认为太冒险，必须保住稳定收入", v: 4, s: "boundary" }, { t: "支持，大不了卖房，陪TA闯一闯，人生难得几回搏", v: 1, s: "empathy" }, { t: "要求TA先做详细商业计划，预留半年生活费，再考虑", v: 5, s: "system" }, { t: "不支持也不反对，说“你自己决定，但别指望我帮你还房贷”", v: 3, s: "co" }, { t: "表面上支持，暗地里把共同账户的钱转走一部分保底", v: 2, s: "boundary" }] },
+      { s: "5️⃣ 现实能力与责任感（知否特色核心）", dim: "D", q: "23. 双方父母同时生病需要照顾，时间和精力只能优先一边。你会？", o: [{ t: "优先照顾自己父母，因为血缘更亲", v: 2, s: "boundary" }, { t: "优先照顾对方父母，为了维持家庭和谐", v: 1, s: "presence" }, { t: "按病情紧急程度判断，谁病重谁优先", v: 4, s: "co" }, { t: "请护工或亲友协助，两边都兼顾，不偏不倚", v: 5, s: "system" }, { t: "和伴侣轮流，一人一边，同时协调资源", v: 3, s: "co" }] },
+      { s: "5️⃣ 现实能力与责任感（知否特色核心）", dim: "D", q: "24. 伴侣承诺的事情（例如陪你去看展、完成家务）连续三次忘记。你会？", o: [{ t: "每次都算了，不追究，觉得TA不是故意的", v: 1, s: "empathy" }, { t: "提醒一次，再忘就生气，让TA写下来", v: 3, s: "boundary" }, { t: "惩罚TA（如要求买礼物补偿），并约定下次再忘的后果", v: 4, s: "boundary" }, { t: "也故意忘记TA在乎的事，让TA体会感受", v: 2, s: "presence" }, { t: "认真谈一次，设立共同日历和提醒，一起解决健忘问题", v: 5, s: "system" }] },
+      { s: "5️⃣ 现实能力与责任感（知否特色核心）", dim: "D", q: "25. 你刚失业，伴侣收入也不高。家里存款只够用半年。你会？", o: [{ t: "立刻接受任何工作，哪怕是送外卖或兼职，先保证收入", v: 5, s: "system" }, { t: "心态崩了，天天在家打游戏或睡觉，等伴侣来安慰", v: 1, s: "empathy" }, { t: "花一个月时间精心准备，找更好的工作，相信半年够了", v: 3, s: "co" }, { t: "向父母或朋友借钱，维持原来生活水平，慢慢找工作", v: 2, s: "presence" }, { t: "要求伴侣也加兼职或换高薪工作，共渡难关", v: 4, s: "boundary" }] }
+    ];
+
+    const results = [
+      { id: "顾廷烨型｜破局护城者", target: { E: 4.6, R: 4.3, T: 3.4, C: 4.6, D: 4.8 }, styleWeight: { empathy: 2, presence: 2, co: 3, boundary: 4, system: 4 }, avatar: { robe: "#2c365e", trim: "#8f5b6f", hair: "#1f2234", item: "#8c95c4", bg: "#dee5ff", style: "blade" }, why: "果敢、有谋略、护短，外冷内热且事业心强；你适合强势有担当、关键时刻能扛事的伴侣。", risk: "他容易把保护升级为代替你决策。", advice: "把重大事项分成“你主导/他主导/共同否决”三栏。", tag: "你要的是能打硬仗的伴侣。", prompt: "highly detailed pixel art, ancient chinese noble warrior man, deep ink-black robe, sheathed sword" },
+      { id: "齐衡型｜体面克制者", target: { E: 3.2, R: 3.8, T: 4.5, C: 3.4, D: 3.1 }, styleWeight: { empathy: 2, presence: 3, co: 3, boundary: 4, system: 2 }, avatar: { robe: "#b5c3ec", trim: "#e7eefc", hair: "#2e3248", item: "#d8e3ff", bg: "#edf2ff", style: "fan" }, why: "温润有礼、重情克制；你适配温柔体贴但偶有优柔寡断的关系模式。", risk: "真实需求可能被礼貌长期压住。", advice: "固定每周一次“去体面沟通”。", tag: "你们很体面，也最怕有口难言。", prompt: "highly detailed pixel art, aristocratic young man, pale jade robe, folded fan" },
+      { id: "贺弘文型｜稳妥照料者", target: { E: 4.0, R: 4.6, T: 3.2, C: 3.1, D: 4.3 }, styleWeight: { empathy: 3, presence: 4, co: 3, boundary: 3, system: 3 }, avatar: { robe: "#8f9cb1", trim: "#78a3ac", hair: "#2f3447", item: "#6d9bb4", bg: "#e3ecff", style: "medicine" }, why: "温和体贴、务实照顾人；你适配稳定职业、重日常照料的伴侣。", risk: "关系可能被功能化，温度下降。", advice: "分工清单外，额外设亲密清单。", tag: "你爱的是被妥帖安放的生活。", prompt: "highly detailed pixel art, scholar physician, medicine case" },
+      { id: "盛长柏型｜秩序共治者", target: { E: 2.8, R: 4.9, T: 4.7, C: 4.9, D: 5.0 }, styleWeight: { empathy: 1, presence: 2, co: 3, boundary: 5, system: 5 }, avatar: { robe: "#445a8e", trim: "#98aede", hair: "#23273a", item: "#96abd8", bg: "#e1e8ff", style: "scroll" }, why: "正直自律、原则明确；你适配公正理性的学霸型共治关系。", risk: "规则过强时，感受会被压扁。", advice: "每条规则后加“情绪豁免条款”。", tag: "你们靠制度相爱。", prompt: "highly detailed pixel art, official robe, bamboo scroll" },
+      { id: "顾廷煜型｜门第守成者", target: { E: 2.5, R: 5.0, T: 4.8, C: 4.0, D: 4.6 }, styleWeight: { empathy: 1, presence: 1, co: 2, boundary: 5, system: 4 }, avatar: { robe: "#7a5e72", trim: "#d7b37d", hair: "#272538", item: "#b8b3d8", bg: "#ebe4fa", style: "jade" }, why: "心思深沉、家族为重；你更容易被重盘算、重秩序的守成型关系吸引。", risk: "容易“合适有余，热烈不足”。", advice: "每季度删一条只为体面的规则。", tag: "你先保住局，再慢慢谈爱。", prompt: "highly detailed pixel art, noble heir, jade pendant" },
+      { id: "盛长枫/梁晗型｜热闹失衡者", target: { E: 4.8, R: 1.9, T: 1.9, C: 2.0, D: 2.4 }, styleWeight: { empathy: 4, presence: 4, co: 1, boundary: 1, system: 1 }, avatar: { robe: "#bb5d73", trim: "#f0dcb6", hair: "#2c2536", item: "#d8a98b", bg: "#f5e9ff", style: "wine" }, why: "恋爱有激情和刺激感，但成熟度与稳定性不足；你在热闹与风险之间反复拉扯。", risk: "承诺可能跟不上情绪起伏。", advice: "把承诺改成可验收任务。", tag: "你怕冷场，所以需要热度。", prompt: "highly detailed pixel art, wealthy young man, wine cup" },
+      { id: "明兰型｜冷静经营者", target: { E: 2.7, R: 5.0, T: 5.0, C: 5.0, D: 5.0 }, styleWeight: { empathy: 1, presence: 2, co: 4, boundary: 4, system: 5 }, avatar: { robe: "#5b806c", trim: "#9fc7b1", hair: "#232838", item: "#91a4c3", bg: "#e3f0ec", style: "abacus" }, why: "聪明通透、独立冷静、善于经营；你适配能一起长期经营关系的人。", risk: "你太会扛，容易被误解为不需要爱。", advice: "主动说出三个“我需要你”的场景。", tag: "你能过好日子，也要交出真心。", prompt: "highly detailed pixel art, noblewoman, abacus" },
+      { id: "如兰型｜直球陪伴者", target: { E: 4.8, R: 3.0, T: 2.4, C: 3.0, D: 3.0 }, styleWeight: { empathy: 4, presence: 3, co: 3, boundary: 1, system: 1 }, avatar: { robe: "#d9a4c5", trim: "#f4dce8", hair: "#2d3045", item: "#e2b8c8", bg: "#f7edff", style: "flower" }, why: "直率热情、不矫情；你适配直接表达爱意、但现实算计能力一般的关系。", risk: "高压时直球容易互相刺痛。", advice: "争执先报状态，再报观点。", tag: "你要的是并肩，而不是被教育。", prompt: "highly detailed pixel art, young lady, flowering branch" },
+      { id: "墨兰-林噙霜型｜资源博弈者", target: { E: 3.0, R: 5.0, T: 5.0, C: 4.5, D: 3.4 }, styleWeight: { empathy: 2, presence: 1, co: 2, boundary: 4, system: 3 }, avatar: { robe: "#6d547d", trim: "#b59fc9", hair: "#252238", item: "#d2bfdf", bg: "#efe7fb", style: "mirror" }, why: "功利算计、擅长攀附与情绪价值输出；你对“资源+情绪回报”极度敏感。", risk: "过度策略化会透支信任。", advice: "把可交换资源和不可交易底线分开写。", tag: "你很会赢局，也要防止输掉亲密。", prompt: "highly detailed pixel art, elegant woman, hand mirror" },
+      { id: "小秦氏-朱曼娘型｜情绪操盘者", target: { E: 5.0, R: 3.4, T: 4.8, C: 5.0, D: 2.6 }, styleWeight: { empathy: 5, presence: 2, co: 1, boundary: 3, system: 2 }, avatar: { robe: "#3f364f", trim: "#c05870", hair: "#1f1f2d", item: "#d9a6b4", bg: "#ece7ff", style: "silk" }, why: "表面温柔、实则操控；你容易陷入情绪勒索与心机博弈的关系回路。", risk: "高频试探会形成消耗循环。", advice: "少试探，多用明确请求句。", tag: "你不是缺爱，你是怕失控。", prompt: "highly detailed pixel art, glamorous woman, silk handkerchief" }
+    ];
+
+    const styleLabels = { empathy: "情绪安抚", presence: "在场陪伴", co: "协商共决", boundary: "边界规则", system: "系统经营" };
+    const avatarImageMap = {
+      "顾廷烨型": "assets/avatars/gutingye.png",
+      "齐衡型": "assets/avatars/qiheng.png",
+      "贺弘文型": "assets/avatars/hehongwen.png",
+      "盛长柏型": "assets/avatars/shengchangbo.png",
+      "顾廷煜型": "assets/avatars/gutingyu.png",
+      "盛长枫/梁晗型": "assets/avatars/shengchangfeng_lianghan.png",
+      "明兰型": "assets/avatars/minglan.png",
+      "如兰型": "assets/avatars/rulan.png",
+      "墨兰-林噙霜型": "assets/avatars/molan_linqinshuang.png",
+      "小秦氏-朱曼娘型": "assets/avatars/xiaoqinshi_zhumannian.png"
+    };
+
+    const quizEl = document.getElementById("quiz");
+    const progressBar = document.getElementById("progressBar");
+    const progressText = document.getElementById("progressText");
+    const resultEl = document.getElementById("result");
+
+    function shuffleArray(arr) {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    const activeQuestions = questions.map(q => ({ ...q, o: shuffleArray(q.o) }));
+
+    function renderQuiz() {
+      let html = "";
+      let currentSection = "";
+      activeQuestions.forEach((item, i) => {
+        if (item.s !== currentSection) {
+          currentSection = item.s;
+          html += `<h2 class="section">${item.s}</h2>`;
+        }
+        html += `<fieldset class="question"><p class="q-title">${item.q}</p><div class="options">`;
+        item.o.forEach((opt, idx) => {
+          html += `<label class="option"><input type="radio" name="q${i + 1}" value="${idx}"><span>${String.fromCharCode(65 + idx)}. ${opt.t}</span></label>`;
+        });
+        html += `</div></fieldset>`;
+      });
+      quizEl.innerHTML = html;
+      quizEl.addEventListener("change", updateProgress);
+    }
+
+    function updateProgress() {
+      const answered = new Set([...quizEl.querySelectorAll("input[type='radio']:checked")].map(i => i.name)).size;
+      const percent = Math.round((answered / activeQuestions.length) * 100);
+      progressBar.style.width = `${percent}%`;
+      progressText.textContent = `已完成 ${answered} / ${activeQuestions.length}`;
+    }
+
+    function levelLabel(v) { if (v < 2.2) return "低"; if (v < 3.8) return "中"; return "高"; }
+
+    function generateAvatarDataUrl(config) {
+      const c = document.createElement("canvas");
+      c.width = 160; c.height = 160;
+      const x = c.getContext("2d");
+      const rect = (color, px, py, w, h) => { x.fillStyle = color; x.fillRect(px, py, w, h); };
+
+      x.save(); x.beginPath(); x.arc(80, 80, 76, 0, Math.PI * 2); x.clip();
+      rect(config.bg, 0, 0, 160, 160); rect("#e9e2d9", 0, 0, 160, 160); rect("#d7c7b8", 102, 0, 58, 160);
+      for (let i = 0; i < 5; i++) rect("#b29585", 16 + i * 14, 24, 4, 84);
+      for (let i = 0; i < 4; i++) rect("#b29585", 16, 32 + i * 16, 64, 4);
+
+      rect("#2a2226", 44, 16, 74, 60); rect(config.hair, 42, 22, 78, 56); rect("#4d3f45", 48, 26, 66, 14);
+      rect("#261f25", 38, 42, 24, 36); rect("#261f25", 96, 44, 24, 34); rect("#6f5d66", 58, 20, 16, 6);
+
+      rect("#f4d7c6", 54, 46, 54, 54); rect("#edc9b7", 56, 86, 38, 8); rect("#f0d0bf", 70, 98, 16, 12);
+      rect("#2d2a34", 66, 70, 10, 3); rect("#2d2a34", 88, 70, 10, 3); rect("#d98484", 73, 86, 18, 4);
+
+      rect(config.robe, 34, 108, 96, 58); rect("#f3efe8", 62, 108, 38, 48); rect(config.trim, 60, 112, 42, 34);
+      rect(config.trim, 46, 130, 72, 16);
+
+      if (config.style === "blade") { rect("#9caad0", 118, 78, 4, 42); rect(config.item, 112, 98, 14, 5); }
+      if (config.style === "fan") { rect(config.item, 112, 116, 24, 12); }
+      if (config.style === "medicine") { rect(config.item, 114, 112, 20, 16); }
+      if (config.style === "scroll") { rect("#e9d7ba", 114, 110, 18, 24); }
+      if (config.style === "jade") { rect(config.item, 118, 112, 12, 12); }
+      if (config.style === "wine") { rect("#c28a78", 118, 112, 12, 12); }
+      if (config.style === "abacus") { rect(config.item, 110, 114, 26, 14); }
+      if (config.style === "flower") { rect("#e8c0d6", 114, 116, 14, 2); }
+      if (config.style === "mirror") { rect(config.item, 116, 110, 16, 20); }
+      if (config.style === "silk") { rect("#d88ba2", 112, 114, 24, 12); }
+
+      x.restore(); x.beginPath(); x.arc(80, 80, 76, 0, Math.PI * 2); x.lineWidth = 4; x.strokeStyle = "#c7b8ac"; x.stroke();
+      return c.toDataURL("image/png");
+    }
+
+    function calculateResult() {
+      const scores = { E: 0, R: 0, T: 0, C: 0, D: 0 };
+      const styleCounts = { empathy: 0, presence: 0, co: 0, boundary: 0, system: 0 };
+
+      for (let i = 0; i < activeQuestions.length; i++) {
+        const selected = quizEl.querySelector(`input[name='q${i + 1}']:checked`);
+        if (!selected) { alert(`第 ${i + 1} 题还未作答。`); return; }
+        const q = activeQuestions[i];
+        const opt = q.o[Number(selected.value)];
+        scores[q.dim] += opt.v;
+        styleCounts[opt.s] += 1;
+      }
+
+      const avg = { E: scores.E / 5, R: scores.R / 5, T: scores.T / 5, C: scores.C / 5, D: scores.D / 5 };
+      const maxDimDistance = Math.sqrt(5 * (4 ** 2));
+      let best = null;
+      let bestScore = -1;
+
+      results.forEach(profile => {
+        const d = Math.sqrt((avg.E - profile.target.E) ** 2 + (avg.R - profile.target.R) ** 2 + (avg.T - profile.target.T) ** 2 + (avg.C - profile.target.C) ** 2 + (avg.D - profile.target.D) ** 2);
+        const dimScore = (maxDimDistance - d) / maxDimDistance;
+        const styleScore = (styleCounts.empathy * profile.styleWeight.empathy + styleCounts.presence * profile.styleWeight.presence + styleCounts.co * profile.styleWeight.co + styleCounts.boundary * profile.styleWeight.boundary + styleCounts.system * profile.styleWeight.system) / (25 * 5);
+        const finalScore = dimScore * 0.58 + styleScore * 0.42;
+        if (finalScore > bestScore) { bestScore = finalScore; best = profile; }
+      });
+
+      const dominantStyles = Object.entries(styleCounts).sort((a, b) => b[1] - a[1]).slice(0, 2).map(([k]) => styleLabels[k]).join(" / ");
+      const typeKey = best.id.split("｜")[0];
+      const avatarSrc = avatarImageMap[typeKey] || generateAvatarDataUrl(best.avatar);
+
+      resultEl.style.display = "block";
+      resultEl.innerHTML = `
+        <h2 class="result-type">${best.id}</h2>
+        <div class="result-visual">
+          <img class="avatar-box" src="${avatarSrc}" alt="${best.id} 像素头像" />
+          <div class="avatar-note">头像为圆构图像素立绘；你的高频期待风格：${dominantStyles}</div>
+        </div>
+        <div class="result-grid">
+          <article class="result-item"><h3>为什么匹配</h3><p>${best.why}</p></article>
+          <article class="result-item"><h3>关系隐患</h3><p>${best.risk}</p></article>
+          <article class="result-item"><h3>关系建议</h3><p>${best.advice}</p></article>
+          <article class="result-item"><h3>一句话标签</h3><p>${best.tag}</p></article>
+          <article class="result-item"><h3>像素头像 Prompt</h3><code>${best.prompt}</code></article>
+        </div>
+        <div class="dim">你的隐藏维度：情感表达需求 ${levelLabel(avg.E)}（${avg.E.toFixed(1)}）｜现实权重 ${levelLabel(avg.R)}（${avg.R.toFixed(1)}）｜关系策略 ${levelLabel(avg.T)}（${avg.T.toFixed(1)}）｜冲突控制感 ${levelLabel(avg.C)}（${avg.C.toFixed(1)}）｜责任承压 ${levelLabel(avg.D)}（${avg.D.toFixed(1)}）</div>
+      `;
+      resultEl.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function resetQuiz() {
+      quizEl.querySelectorAll("input[type='radio']").forEach(i => i.checked = false);
+      progressBar.style.width = "0%";
+      progressText.textContent = `已完成 0 / ${activeQuestions.length}`;
+      resultEl.style.display = "none";
+      resultEl.innerHTML = "";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    document.getElementById("submitBtn").addEventListener("click", calculateResult);
+    document.getElementById("resetBtn").addEventListener("click", resetQuiz);
+    renderQuiz();
+  </script>
+</body>
+</html>
+
